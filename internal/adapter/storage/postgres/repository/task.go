@@ -21,7 +21,7 @@ func (r *TaskRepository) CreateTask(ctx context.Context, task *domain.Task) (*do
 	db := r.db.GetDB()
 
 	if err := db.WithContext(ctx).Create(task).Error; err != nil {
-		return nil, err
+		return nil, domain.ErrInternal
 	}
 
 	return task, nil
@@ -32,7 +32,7 @@ func (r *TaskRepository) GetTaskByID(ctx context.Context, id uint) (*domain.Task
 
 	var task domain.Task
 	if err := db.WithContext(ctx).Where("id = ?", id).First(&task).Error; err != nil {
-		return nil, err
+		return nil, domain.ErrInternal
 	}
 
 	return &task, nil
@@ -43,7 +43,7 @@ func (r *TaskRepository) GetTasks(ctx context.Context) ([]domain.Task, error) {
 
 	var tasks []domain.Task
 	if err := db.WithContext(ctx).Find(&tasks).Error; err != nil {
-		return nil, err
+		return nil, domain.ErrInternal
 	}
 
 	return tasks, nil
@@ -53,7 +53,7 @@ func (r *TaskRepository) UpdateTask(ctx context.Context, id uint, task *domain.T
 	db := r.db.GetDB()
 
 	if err := db.WithContext(ctx).Model(&domain.Task{}).Where("id = ?", id).Updates(task).Error; err != nil {
-		return nil, err
+		return nil, domain.ErrInternal
 	}
 
 	return task, nil
@@ -63,7 +63,7 @@ func (r *TaskRepository) DeleteTask(ctx context.Context, id uint) error {
 	db := r.db.GetDB()
 
 	if err := db.WithContext(ctx).Delete(&domain.Task{}, id).Error; err != nil {
-		return err
+		return domain.ErrInternal
 	}
 
 	return nil
